@@ -6,6 +6,7 @@ import ChatList from "../specific/ChatList";
 import { SampleChats } from "../constants/sampleData";
 import { useParams } from "react-router-dom";
 import ErrorBoundary from "../shared/ErrorBoundary";
+import Profile from "../specific/Profile";
 
 const AppLayout = (WrappedComponent) => {
   return (props) => {
@@ -26,7 +27,7 @@ const AppLayout = (WrappedComponent) => {
 
     return (
       <>
-        <Title title="Chat App" />
+        <Title title="Chattrix" />
         <Header />
 
         <Grid container height={"calc(100vh - 4rem)"} sx={{ width: "100%" }}>
@@ -57,7 +58,6 @@ const AppLayout = (WrappedComponent) => {
             sx={{
               height: "100%",
               bgcolor: "#c5b8b8ff",
-              p: 1,
             }}
           >
             <ErrorBoundary fallback={<Typography>Main content failed to load.</Typography>}>
@@ -79,7 +79,7 @@ const AppLayout = (WrappedComponent) => {
                 p: 1,
               }}
             >
-              <Typography variant="h6">Third Column</Typography>
+              <Profile />
             </Box>
           </Grid>
         </Grid>
