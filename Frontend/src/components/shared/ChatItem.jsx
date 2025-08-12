@@ -22,17 +22,16 @@ const ChatItem = ({
     >
       <div
         style={{
-          padding: "1rem",
-          gap: "1rem",
           display: "flex",
-          justifyContent: "space-between",
+          gap: "1rem",
           alignItems: "center",
           backgroundColor: sameSender ? "black" : "unset",
           color: sameSender ? "white" : "unset",
           position: "relative",
+          padding: "1rem",
         }}
       >
-       <AvatarCard avatar={avatar} />
+       <AvatarCard avatar={[avatar]} />
 
         <Stack>
           <Typography>{name}</Typography>

@@ -5,5 +5,5 @@ const Home = () => {
   return <div>Home Page </div>;
 };
 
-const HomeWithLayout = AppLayout(Home); // Corrected: removed the extra ()
+const HomeWithLayout = AppLayout(Home); 
 export default HomeWithLayout;

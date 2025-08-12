@@ -7,5 +7,5 @@ const Chat = () => {
   )
 }
 
-const ChatWithLayout = AppLayout(Chat); // Corrected: removed the extra ()
+const ChatWithLayout = AppLayout(Chat); 
 export default ChatWithLayout;

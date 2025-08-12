@@ -1,10 +1,11 @@
 import React from "react";
 import Header from "./Header";
 import Title from "../shared/Title";
-import { Grid, Box, Paper, Typography } from "@mui/material";
+import { Grid, Box, Typography } from "@mui/material";
 import ChatList from "../specific/ChatList";
 import { SampleChats } from "../constants/sampleData";
 import { useParams } from "react-router-dom";
+import ErrorBoundary from "../shared/ErrorBoundary";
 
 const AppLayout = (WrappedComponent) => {
   return (props) => {
@@ -15,6 +16,13 @@ const AppLayout = (WrappedComponent) => {
       e.preventDefault();
       console.log("Delete Chattu ", _id, groupChat);
     };
+
+    // Default component if WrappedComponent is missing
+    const ComponentToRender = WrappedComponent || (() => (
+      <Typography variant="h6" color="text.secondary">
+        Missing Home component
+      </Typography>
+    ));
 
     return (
       <>
@@ -32,15 +40,15 @@ const AppLayout = (WrappedComponent) => {
             <Box
               sx={{
                 height: "100%",
-                bgcolor: "#00b8d8ff",
-                p: 1,
               }}
             >
-              <ChatList
-                chats={SampleChats}
-                chatId={chatId}
-                handleDeleteChat={handleDeleteChat}
-              />
+              <ErrorBoundary fallback={<Typography>Chat list failed to load.</Typography>}>
+                <ChatList
+                  chats={SampleChats || []}
+                  chatId={chatId}
+                  handleDeleteChat={handleDeleteChat}
+                />
+              </ErrorBoundary>
             </Box>
           </Grid>
 
@@ -52,7 +60,9 @@ const AppLayout = (WrappedComponent) => {
               p: 1,
             }}
           >
-            <WrappedComponent {...props} />
+            <ErrorBoundary fallback={<Typography>Main content failed to load.</Typography>}>
+              <ComponentToRender {...(props || {})} />
+            </ErrorBoundary>
           </Grid>
 
           <Grid
