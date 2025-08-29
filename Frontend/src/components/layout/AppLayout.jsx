@@ -19,11 +19,13 @@ const AppLayout = (WrappedComponent) => {
     };
 
     // Default component if WrappedComponent is missing
-    const ComponentToRender = WrappedComponent || (() => (
-      <Typography variant="h6" color="text.secondary">
-        Missing Home component
-      </Typography>
-    ));
+    const ComponentToRender =
+      WrappedComponent ||
+      (() => (
+        <Typography variant="h6" color="text.secondary">
+          Missing Home component
+        </Typography>
+      ));
 
     return (
       <>
@@ -43,7 +45,9 @@ const AppLayout = (WrappedComponent) => {
                 height: "100%",
               }}
             >
-              <ErrorBoundary fallback={<Typography>Chat list failed to load.</Typography>}>
+              <ErrorBoundary
+                fallback={<Typography>Chat list failed to load.</Typography>}
+              >
                 <ChatList
                   chats={SampleChats || []}
                   chatId={chatId}
@@ -57,10 +61,12 @@ const AppLayout = (WrappedComponent) => {
             size={{ xs: 12, sm: 8, md: 6, lg: 5 }}
             sx={{
               height: "100%",
-              bgcolor: "#c5b8b8ff",
+              bgcolor: "#d1d1d1ff",
             }}
           >
-            <ErrorBoundary fallback={<Typography>Main content failed to load.</Typography>}>
+            <ErrorBoundary
+              fallback={<Typography>Main content failed to load.</Typography>}
+            >
               <ComponentToRender {...(props || {})} />
             </ErrorBoundary>
           </Grid>

@@ -3,6 +3,7 @@ import {
   DialogTitle,
   InputAdornment,
   List,
+  Paper,
   Stack,
   TextField,
 } from "@mui/material";
@@ -13,7 +14,6 @@ import UserItem from "../shared/UserItem";
 import { SampleUsers } from "../constants/sampleData";
 
 const Search = () => {
-  
   let isLoadingSendFriendRequest = false;
 
   const [users, setUsers] = useState(SampleUsers);
@@ -25,10 +25,19 @@ const Search = () => {
   const search = useInputValidation("");
   return (
     <Dialog open>
-      <Stack p={"2rem"} direction={"column"} width={"25rem"}>
-        <DialogTitle textAlign={"center"}>Find People</DialogTitle>
+      <Stack
+        p={"2rem"}
+        direction={"column"}
+        width={"27rem"}
+        sx={{
+          width: { xs: "100%", sm: "100%" },
+        }}
+      >
+        <DialogTitle textAlign={"center"} variant="h4">
+          Find People
+        </DialogTitle>
         <TextField
-          label=""
+          label="Search"
           value={search.value}
           onChange={search.changeHandler}
           variant="outlined"
@@ -42,14 +51,28 @@ const Search = () => {
           }}
         />
 
-        <List>
+        <List sx={{ mt: 2, p: 0 }}>
           {users.map((user) => (
-            <UserItem
-              user={user}
+            <Paper
               key={user._id}
-              handler={addFriendHandler}
-              handlerIsLoading={isLoadingSendFriendRequest}
-            />
+              elevation={2}
+              sx={{
+                border: "1px solid rgba(0,0,0,0.1)",
+                borderRadius: "8px",
+                p: { xs: 1.5, sm: 2 },
+                mb: 1.5,
+                transition: "box-shadow 0.2s ease",
+                "&:hover": {
+                  boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
+                },
+              }}
+            >
+              <UserItem
+                user={user}
+                handler={addFriendHandler}
+                handlerIsLoading={isLoadingSendFriendRequest}
+              />
+            </Paper>
           ))}
         </List>
       </Stack>

@@ -58,7 +58,6 @@ const NotificationsItem = memo(({ sender, _id, handler, handlerIsLoading }) => {
       >
         <ListItem disableGutters>
           <Stack width="100%" spacing={1}>
-            {/* Top row: Avatar + message */}
             <Stack
               direction="row"
               alignItems="center"
@@ -78,7 +77,6 @@ const NotificationsItem = memo(({ sender, _id, handler, handlerIsLoading }) => {
               </Typography>
             </Stack>
 
-            {/* Bottom row: Buttons */}
             <Stack
               display={"flex"}
               direction={"row"}
