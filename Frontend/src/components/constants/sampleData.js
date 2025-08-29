@@ -48,12 +48,7 @@ export const SampleNotifications = [
 
 export const sampleMessage = [
   {
-    attachments: [
-      {
-        public_id: "jklm",
-        url: ["https://www.w3schools.com/howto/img_avatar.png"],
-      },
-    ],
+    attachments: [],
     content: "Launde ka Message aya hai",
     _id: "fghjkrfghjcvbnm345678i9kjnhgyu",
     sender: {
@@ -61,22 +56,22 @@ export const sampleMessage = [
       name: "Chaman",
     },
     chat: "chatId",
-    createdAt: "2025-02-12T10:41:30.630Z",
+    createdAt: "2025-08-29T12:43:03.851Z",
   },
   {
     attachments: [
       {
         public_id: "jklm2",
-        url: ["https://www.w3schools.com/howto/img_avatar.png"],
+        url: "https://www.w3schools.com/howto/img_avatar.png",
       },
     ],
-    content: "Launde ka Sarkar hai",
+    content: "",
     _id: "fghjkrfghjcvbnm345678i9kjnhgyu",
     sender: {
       _id: "wowsameId",
       name: "Chaman 2",
     },
     chat: "chatId",
-    createdAt: "2025-02-12T10:41:30.630Z",
+    createdAt: "2025-08-29T12:43:03.851Z",
   },
 ];

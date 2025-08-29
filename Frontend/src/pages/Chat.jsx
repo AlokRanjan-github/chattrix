@@ -27,7 +27,7 @@ const Chat = () => {
         ref={containerRef}
         boxSizing="border-box"
         padding="1rem"
-        spacing="1rem"
+        spacing="0.3rem"
         bgcolor={grayColor}
         height="90%"
         sx={{
@@ -35,8 +35,8 @@ const Chat = () => {
           overflowY: "auto",
         }}
       >
-        {sampleMessage.map((i) => (
-          <MessageComponent key={i._id} message={i} user={user} />
+        {sampleMessage.map((i,index) => (
+          <MessageComponent key={i._id+index} message={i} user={user} />
         ))}
       </Stack>
 
