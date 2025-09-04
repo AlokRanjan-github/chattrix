@@ -30,13 +30,18 @@ const NewGroups = () => {
     console.log("Submit clicked");
   };
 
-  const closeHandler = ()=>{
-    console.log("On close after Redux will be implemented")
-  }
+  const closeHandler = () => {
+    console.log("On close after Redux will be implemented");
+  };
 
   return (
     <Dialog open>
-      <Stack p={{ xs: "1rem", sm: "2rem" }} width={"26rem"} spacing={"1rem"}>
+      <Stack
+        p={{ xs: "1rem", sm: "2rem" }}
+        width={{ xs: "24rem", sm: "26rem" }}
+        maxWidth="100%"
+        spacing={"1rem"}
+      >
         <DialogTitle textAlign={"center"} variant="h4">
           New Group
         </DialogTitle>
