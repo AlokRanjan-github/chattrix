@@ -7,10 +7,15 @@ const HomeWithLayout = lazy(() => import("./pages/Home"));
 const ChatWithLayout = lazy(() => import("./pages/Chat"));
 const Login = lazy(() => import("./pages/Login"));
 const Groups = lazy(() => import("./pages/Groups"));
-const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
-const NotFound = lazy(() => import("./pages/NotFound"));
 
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
+const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
+const ChatManagement = lazy(() => import("./pages/admin/ChatManagement"));
+const MessageManagement = lazy(() => import("./pages/admin/MessageManagement"));
+
+const NotFound = lazy(() => import("./pages/NotFound"));
+
 
 const user = true;
 
@@ -35,7 +40,13 @@ const App = () => {
           />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/chats" element={<ChatManagement />} />
+          <Route path="/admin/messages" element={<MessageManagement />} />
+          
           <Route path="*" element={<NotFound />} />
+          
+          
         </Routes>
       </Suspense>
     </BrowserRouter>

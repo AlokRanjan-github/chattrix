@@ -38,12 +38,12 @@ const adminTabs = [
   },
   {
     name: "Users",
-    path: "/admin/users-management",
+    path: "/admin/users",
     icon: <ManageAccountsIcon />,
   },
   {
     name: "Chats",
-    path: "/admin/chats-management",
+    path: "/admin/chats",
     icon: <GroupsIcon />,
   },
   {
@@ -54,16 +54,20 @@ const adminTabs = [
 ];
 
 const Sidebar = ({ w = "100%" }) => {
-  
   const location = useLocation();
-  
+
   const logoutHandler = () => {
     console.log("logout");
   };
 
   return (
-    <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"}>
-      <Typography variant="h5" textTransform={"uppercase"}>
+    <Stack
+      width={w}
+      direction={"column"}
+      p={{ xs: "0.5rem", md: "2rem" }}
+      spacing={"3rem"}
+    >
+      <Typography variant="h5" textAlign={"center"} textTransform={"uppercase"}>
         Chattu
       </Typography>
 
@@ -98,7 +102,6 @@ const Sidebar = ({ w = "100%" }) => {
   );
 };
 
-
 const isAdmin = true;
 const AdminLayout = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -106,7 +109,7 @@ const AdminLayout = ({ children }) => {
   const handleMobile = () => setIsMobile(!isMobile);
   const handleClose = () => setIsMobile(false);
 
-if (!isAdmin) return <Navigate to="/admin" />
+  if (!isAdmin) return <Navigate to="/admin" />;
 
   return (
     <Grid container minHeight="100vh" sx={{ width: "100%" }}>
@@ -114,8 +117,8 @@ if (!isAdmin) return <Navigate to="/admin" />
         sx={{
           display: { xs: "block", md: "none" },
           position: "fixed",
-          right: "1rem",
-          top: "1rem",
+          right: "0.5rem",
+          top: "0.5rem",
         }}
       >
         <IconButton onClick={handleMobile}>
@@ -134,7 +137,6 @@ if (!isAdmin) return <Navigate to="/admin" />
         size={{ xs: 12, md: 8, lg: 9 }}
         sx={{ bgcolor: "background.paper" }}
       >
-        Children
         {children}
       </Grid>
 
