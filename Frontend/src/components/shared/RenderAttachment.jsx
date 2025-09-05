@@ -15,6 +15,8 @@ const RenderAttachment = (file, url) => {
           height={"150px"}
           style={{
             objectFit: "contain",
+            display: "block", 
+            marginTop: "1.5rem",
           }}
         />
       );

@@ -22,6 +22,7 @@ const fileFormat = (url = "") => {
   }
   return "file";
 };
+
 const transformImage = (url = "", width = 100) => url;
 
 const getLast7Days = () => {
