@@ -46,15 +46,15 @@ const columns = [
   },
 
   {
-  field: "content",
-  headerName: "Content",
-  headerClassName: "table-header",
-  width: 400,
-  renderCell: (params) =>
-    params.row.content && params.row.content.trim() !== ""
-      ? params.row.content
-      : "- No Message -",
-},
+    field: "content",
+    headerName: "Content",
+    headerClassName: "table-header",
+    width: 400,
+    // renderCell: (params) =>
+    //   params.row.content && params.row.content.trim() !== ""
+    //     ? params.row.content
+    //     : "- No Message -",
+  },
 
   {
     field: "sender",
@@ -96,6 +96,8 @@ const MessageManagement = () => {
       dashboardData.messages.map((i) => ({
         ...i,
         id: i._id,
+        content:
+          i.content && i.content.trim() !== "" ? i.content : "- No Message -",
         sender: {
           name: i.sender.name,
           avatar: transformImage(i.sender.avatar, 50),
