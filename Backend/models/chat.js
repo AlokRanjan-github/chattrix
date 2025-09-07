@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, Types } from "mongoose";
 
 const schema = new Schema(
   {
@@ -6,30 +6,24 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
+    groupChat: {
+      type: Boolean,
+      default: false,
     },
-    password: {
-      type: String,
-      required: true,
-      select: false,
+    creator: {
+      type: Types.ObjectId,
+      ref: "User",
     },
-    avatar: {
-      public_id: {
-        type: String,
-        required: true,
+    members: [
+      {
+        type: Types.ObjectId,
+        ref: "User",
       },
-      url: {
-        type: String,
-        required: true,
-      },
-    },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-export const User = models.User || model("User", schema);
+export const Chat =mongoose.models.Chat || model("Chat", schema);
