@@ -1,14 +1,10 @@
 import express from "express";
-import login  from "../controllers/user.js";
+import { login, newUser } from "../controllers/user.js";
+import { singleAvatar } from "../middlewares/multer.js";
 
-const router = express.Router();
+const app = express.Router();
 
-// http://localhost/3000/user/
-router.get("/",(req, res)=>{
-    res.send("This is User Route Home page")
-})
+app.post("/new", singleAvatar, newUser);
+app.post("/login", login);
 
-// http://localhost/3000/user/login
-router.get("/login", login);
-
-export { router  as userRoute};
+export default app;
