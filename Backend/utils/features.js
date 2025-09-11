@@ -14,7 +14,7 @@ const connectDB = async () => {
 const cookieOptions = {
   maxAge: 24 * 60 * 60 * 1000,
   sameSite: "none",
-  httpOnly: "true",
+  httpOnly: true,
   secure: true,
 };
 const sendToken = (res, user, code, message) => {
@@ -27,4 +27,6 @@ const sendToken = (res, user, code, message) => {
       message,
     });
 };
+
+
 export { connectDB, sendToken };
