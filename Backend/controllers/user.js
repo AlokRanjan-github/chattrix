@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { User } from "../models/user.js";
-import { sendToken } from "../utils/features.js";
+import { cookieOptions, sendToken } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "../middlewares/error.js";
 
@@ -40,15 +40,30 @@ const login = TryCatch(async (req, res, next) => {
 });
 
 const getMyProfile = TryCatch(async (req, res, next) => {
-  // const user = await User.findById(req.user);
+  const user = await User.findById(req.user);
 
-  // if (!user) return next(new ErrorHandler("User not found", 404));
+  if (!user) return next(new ErrorHandler("User not found", 404));
 
   res.status(200).json({
     success: true,
-    // user,
-    data: req.user,
+    user,
   });
 });
+const logout = TryCatch(async (req, res, next) => {
+  res
+    .status(200)
+    .cookie("ItsaSecret-Token", "", { ...cookieOptions, maxAge: 0 })
+    .json({
+      success: true,
+      message: "Logged out successfully!",
+    });
+});
+const searchUser = TryCatch(async (req, res, next) => {
+  const {name} = req.query;
+  res.json({
+    success: true,
+    message:name
+  })
+});
 
-export { login, newUser, getMyProfile };
+export { login, newUser, getMyProfile, logout, searchUser };
