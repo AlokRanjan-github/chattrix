@@ -1,15 +1,15 @@
 import express from "express";
 import {
-  // addMembers,
+  addMembers,
   // deleteChat,
   // getChatDetails,
   // getMessages,
   getMyChats,
   getMyGroups,
   // getMyGroups,
-  // leaveGroup,
+  leaveGroup,
   newGroupChat,
-  // removeMember,
+  removeMember,
   // renameGroup,
   // sendAttachments,
 } from "../controllers/chat.js";
@@ -37,16 +37,11 @@ app.get("/my", getMyChats);
 
 app.get("/my/groups", getMyGroups);
 
-// app.put("/addmembers", addMemberValidator(), validateHandler, addMembers);
+app.put("/addmembers", addMembers);
 
-// app.put(
-//   "/removemember",
-//   removeMemberValidator(),
-//   validateHandler,
-//   removeMember
-// );
+app.put( "/removemember", removeMemberValidator(), validateHandler, removeMember);
 
-// app.delete("/leave/:id", chatIdValidator(), validateHandler, leaveGroup);
+app.delete("/leave/:id", chatIdValidator(), validateHandler, leaveGroup);
 
 // // Send Attachments
 // app.post(
