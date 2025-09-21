@@ -1,15 +1,15 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
+import { Title as HeadTitle, Meta } from "react-head";
 
 const Title = ({
-  title = "Chat",
-  description = "This the chat app called Chattrix",
+  title = "Chattu",
+  description = "This is the chat app called Chattrix",
 }) => {
   return (
-    <Helmet>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-    </Helmet>
+    <>
+      <HeadTitle>{title}</HeadTitle>
+      <Meta name="description" content={description} />
+    </>
   );
 };
 
