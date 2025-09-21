@@ -1,4 +1,4 @@
-import { body, param, validationResult } from "express-validator";
+import { body, check, param, validationResult } from "express-validator";
 import { ErrorHandler } from "../utils/utility.js";
 
 const validateHandler = (req, res, next) => {
@@ -18,6 +18,7 @@ const registerValidator = () => [
   body("username", "Please Enter Username").notEmpty(),
   body("bio", "Please Enter Bio").notEmpty(),
   body("password", "Please Enter Password").notEmpty(),
+  // check("avatar", "Please upload Avatar").notEmpty(),
 ];
 
 const loginValidator = () => [

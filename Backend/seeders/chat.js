@@ -62,7 +62,7 @@ const createGroupChats = async (numChats) => {
 
     await Promise.all(chatsPromise);
 
-    console.log("Chats created successfully");
+    console.log("Group Chats created successfully");
     process.exit();
   } catch (error) {
     console.error(error);
@@ -129,8 +129,8 @@ const createMessagesInAChat = async (chatId, numMessages) => {
 };
 
 export {
+  createSingleChats,
   createGroupChats,
   createMessages,
   createMessagesInAChat,
-  createSingleChats,
 };
