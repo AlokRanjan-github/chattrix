@@ -20,6 +20,7 @@ const errorMiddleware = (err, req, res, next) => {
     success: false,
     message: err.message,
   };
+  
   if (envMode === "DEVELOPMENT") {
     response.error = {
       name: err.name,
