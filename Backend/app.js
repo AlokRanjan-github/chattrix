@@ -15,6 +15,8 @@ import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
 
+import cors from "cors";
+
 const app = express();
 
 const server = createServer(app);
@@ -28,13 +30,23 @@ dotenv.config({
 
 //for accepting the json data coming from frontend (also req.body)
 app.use(express.json());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      process.env.CLIENT_URL,
+    ],
+    credentials: true,
+  })
+);
 
 //for only accepting form-data but we need multipart form-data so we're using multer as middleware
 // app.use(express.urlencoded());
 
-app.use("/user", userRoute);
-app.use("/chat", chatRoute);
-app.use("/admin", adminRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/chat", chatRoute);
+app.use("/api/v1/admin", adminRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello World from express");
