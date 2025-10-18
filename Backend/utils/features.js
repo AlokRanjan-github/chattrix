@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { v4 as uuid } from "uuid";
+import { v2 as cloudinary } from "cloudinary";
+import { getBase64 } from "../lib/helper.js";
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
@@ -13,9 +17,11 @@ const connectDB = async () => {
 
 const cookieOptions = {
   maxAge: 24 * 60 * 60 * 1000,
-  sameSite: "none",
   httpOnly: true,
+  sameSite: "none",
   secure: true,
+  // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  // secure: process.env.NODE_ENV === "production",
 };
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);

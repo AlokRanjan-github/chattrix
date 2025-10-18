@@ -13,9 +13,21 @@ import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/Style/StyledComponent";
 import { useFileHandler, useInputValidation } from "6pp";
 import { usernameValidators } from "../utils/validators";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { server } from "../components/constants/config";
+import { userExists } from "../redux/reducers/auth";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const toggleLogin = () => setIsLogin((prev) => !prev);
   const name = useInputValidation("");
   const bio = useInputValidation("");
@@ -24,11 +36,81 @@ const Login = () => {
   // const password = useStrongPassword();
   const avatar = useFileHandler("single");
 
-  const handleLogin = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+
+    const toastId = toast.loading("Logging In...");
+
+    setIsLoading(true);
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        config
+      );
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-  const handleSignUp = (e) => {
+
+  const handleSignUp = async (e) => {
     e.preventDefault();
+
+    const toastId = toast.loading("Signing Up...");
+    setIsLoading(true);
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/new`,
+        formData,
+        config
+      );
+
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -67,6 +149,8 @@ const Login = () => {
                 label="Username"
                 margin="normal"
                 variant="outlined"
+                value={username.value}
+                onChange={username.changeHandler}
               />
               <TextField
                 required
@@ -75,6 +159,8 @@ const Login = () => {
                 type="password"
                 margin="normal"
                 variant="outlined"
+                value={password.value}
+                onChange={password.changeHandler}
               />
               <Button
                 sx={{ marginTop: "1rem" }}
@@ -82,6 +168,7 @@ const Login = () => {
                 color="primary"
                 type="submit"
                 fullWidth
+                disabled={isLoading}
               >
                 Login
               </Button>
@@ -89,7 +176,12 @@ const Login = () => {
               <Typography textAlign={"center"} m={"1rem"}>
                 Or
               </Typography>
-              <Button variant="text" fullWidth onClick={toggleLogin}>
+              <Button
+                variant="text"
+                fullWidth
+                onClick={toggleLogin}
+                disabled={isLoading}
+              >
                 Sign Up Instead
               </Button>
             </form>
@@ -145,7 +237,7 @@ const Login = () => {
                 label="Username"
                 margin="normal"
                 variant="outlined"
-                value={username.input}
+                value={username.value}
                 onChange={username.changeHandler}
               />
 
@@ -160,7 +252,7 @@ const Login = () => {
                 label="Name"
                 margin="normal"
                 variant="outlined"
-                value={name.input}
+                value={name.value}
                 onChange={name.changeHandler}
               />
               <TextField
@@ -169,7 +261,7 @@ const Login = () => {
                 label="Bio"
                 margin="normal"
                 variant="outlined"
-                value={bio.input}
+                value={bio.value}
                 onChange={bio.changeHandler}
               />
               <TextField
@@ -179,7 +271,7 @@ const Login = () => {
                 type="password"
                 margin="normal"
                 variant="outlined"
-                value={password.input}
+                value={password.value}
                 onChange={password.changeHandler}
               />
               {/* {
@@ -195,6 +287,7 @@ const Login = () => {
                 color="primary"
                 type="submit"
                 fullWidth
+                disabled={isLoading}
               >
                 Sign Up
               </Button>
@@ -202,7 +295,12 @@ const Login = () => {
               <Typography textAlign={"center"} m={"1rem"}>
                 Or
               </Typography>
-              <Button variant="text" fullWidth onClick={toggleLogin}>
+              <Button
+                variant="text"
+                disabled={isLoading}
+                fullWidth
+                onClick={toggleLogin}
+              >
                 Login Instead
               </Button>
             </form>

@@ -12,19 +12,25 @@ import { useInputValidation } from "6pp";
 import { Search as SearchIcon } from "@mui/icons-material";
 import UserItem from "../shared/UserItem";
 import { SampleUsers } from "../constants/sampleData";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsSearch } from "../../redux/reducers/misc";
 
 const Search = () => {
-  let isLoadingSendFriendRequest = false;
+  const { isSearch } = useSelector((state) => state.misc);
+  const dispatch = useDispatch();
+  const search = useInputValidation("");
 
+  let isLoadingSendFriendRequest = false;
   const [users, setUsers] = useState(SampleUsers);
 
   const addFriendHandler = (id) => {
     console.log("Add friend" + id);
   };
 
-  const search = useInputValidation("");
+  const searchCloseHandler = () => dispatch(setIsSearch(false));
+
   return (
-    <Dialog open>
+    <Dialog open={isSearch} onClose={searchCloseHandler}>
       <Stack
         p={"2rem"}
         direction={"column"}

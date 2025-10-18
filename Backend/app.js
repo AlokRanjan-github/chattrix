@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import { v2 as cloudinary } from "cloudinary";
 import { connectDB } from "./utils/features.js";
 import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
@@ -30,6 +31,17 @@ dotenv.config({
 
 //for accepting the json data coming from frontend (also req.body)
 app.use(express.json());
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "http://localhost:4173",
+//       process.env.CLIENT_URL,
+//     ],
+//     credentials: true,
+//   })
+// );
+
 app.use(
   cors({
     origin: [
@@ -38,8 +50,17 @@ app.use(
       process.env.CLIENT_URL,
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 //for only accepting form-data but we need multipart form-data so we're using multer as middleware
 // app.use(express.urlencoded());

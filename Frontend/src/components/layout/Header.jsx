@@ -18,34 +18,50 @@ import {
   Notifications as NotificationsIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { server } from "../constants/config.js";
+import axios from "axios";
+import { userNotExists } from "../../redux/reducers/auth.js";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsMobile, setIsSearch } from "../../redux/reducers/misc.js";
 
 const SearchDialog = lazy(() => import("../specific/Search.jsx"));
 const NotificationDialog = lazy(() => import("../specific/Notifications.jsx"));
 const NewGroupDialog = lazy(() => import("../specific/NewGroups.jsx"));
 
 const Header = () => {
-  const [isMobile, setMobile] = useState(false);
-  const [isSearch, setIsSearch] = useState(false);
+  const { isSearch } = useSelector((state) => state.misc);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
 
-  const navigate = useNavigate();
   const navigateToGroup = () => navigate("/groups");
 
   const handleMobile = () => {
-    setMobile((prev) => !prev);
+    dispatch(setIsMobile(true));
   };
 
   const openSearchDialog = () => {
-    setIsSearch((prev) => !prev);
+    dispatch(setIsSearch(true));
   };
 
   const openNewGroup = () => {
     setIsNewGroup((prev) => !prev);
   };
 
-  const logoutHandler = () => {
-    console.log("Logout");
+  const logoutHandler = async () => {
+    try {
+      const { data } = await axios.get(`${server}/api/v1/user/logout`, {
+        withCredentials: true,
+      });
+      dispatch(userNotExists());
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
   };
 
   const openNotification = () => {

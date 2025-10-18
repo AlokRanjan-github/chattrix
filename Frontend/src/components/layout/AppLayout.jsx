@@ -1,22 +1,32 @@
 import React from "react";
 import Header from "./Header";
 import Title from "../shared/Title";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Box, Typography, Skeleton, Drawer } from "@mui/material";
 import ChatList from "../specific/ChatList";
 import { SampleChats } from "../constants/sampleData";
 import { useParams } from "react-router-dom";
 import ErrorBoundary from "../shared/ErrorBoundary";
 import Profile from "../specific/Profile";
+import { useMyChatsQuery } from "../../redux/api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsMobile } from "../../redux/reducers/misc";
 
 const AppLayout = (WrappedComponent) => {
   return (props) => {
     const params = useParams();
+    const dispatch = useDispatch();
     const chatId = params.chatId;
+
+    const { isMobile } = useSelector((state) => state.misc);
+
+    const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
 
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();
       console.log("Delete Chattu ", _id, groupChat);
     };
+
+    const handleMobileClose = () => dispatch(setIsMobile(false));
 
     // Default component if WrappedComponent is missing
     const ComponentToRender =
@@ -31,6 +41,21 @@ const AppLayout = (WrappedComponent) => {
       <>
         <Title title="Chattrix" />
         <Header />
+
+        {isLoading ? (
+          <Skeleton />
+        ) : (
+          <Drawer open={isMobile} onClose={handleMobileClose}>
+            <ChatList
+              w="70vw"
+              chats={data?.chats}
+              chatId={chatId}
+              handleDeleteChat={handleDeleteChat}
+              // newMessagesAlert={newMessagesAlert}
+              // onlineUsers={onlineUsers}
+            />
+          </Drawer>
+        )}
 
         <Grid container height={"calc(100vh - 4rem)"} sx={{ width: "100%" }}>
           <Grid
@@ -48,11 +73,15 @@ const AppLayout = (WrappedComponent) => {
               <ErrorBoundary
                 fallback={<Typography>Chat list failed to load.</Typography>}
               >
-                <ChatList
-                  chats={SampleChats || []}
-                  chatId={chatId}
-                  handleDeleteChat={handleDeleteChat}
-                />
+                {isLoading ? (
+                  <Skeleton />
+                ) : (
+                  <ChatList
+                    chats={data?.chats}
+                    chatId={chatId}
+                    handleDeleteChat={handleDeleteChat}
+                  />
+                )}
               </ErrorBoundary>
             </Box>
           </Grid>
