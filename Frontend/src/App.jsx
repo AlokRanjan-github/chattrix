@@ -9,6 +9,7 @@ import { userExists, userNotExists } from "./redux/reducers/auth";
 
 import axios from "axios";
 import ProtectRoute from "./components/auth/ProtectRoute";
+import { SocketProvider } from "./socket.jsx";
 
 const HomeWithLayout = lazy(() => import("./pages/Home"));
 const ChatWithLayout = lazy(() => import("./pages/Chat"));
@@ -48,7 +49,13 @@ const App = () => {
         }
       >
         <Routes>
-          <Route element={<ProtectRoute user={user} />}>
+          <Route
+            element={
+              <SocketProvider>
+                <ProtectRoute user={user} />
+              </SocketProvider>
+            }
+          >
             <Route path="/" element={<HomeWithLayout />} />
             <Route path="/chat/:chatId" element={<ChatWithLayout />} />
             <Route path="/groups" element={<Groups />} />

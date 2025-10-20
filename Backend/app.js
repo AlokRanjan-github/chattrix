@@ -1,27 +1,33 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
 import { v2 as cloudinary } from "cloudinary";
 import { connectDB } from "./utils/features.js";
 import { errorMiddleware } from "./middlewares/error.js";
-import cookieParser from "cookie-parser";
+
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { v4 as uuid } from "uuid";
+
+import { getSockets } from "./lib/helper.js";
+import { Message } from "./models/message.js";
+import { corsOptions } from "./constants/config.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
 
 import userRoute from "./routes/user.js";
 import chatRoute from "./routes/chat.js";
 import adminRoute from "./routes/admin.js";
 
-import { Server } from "socket.io";
-import { createServer } from "http";
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
-import { v4 as uuid } from "uuid";
-import { getSockets } from "./lib/helper.js";
-import { Message } from "./models/message.js";
-
-import cors from "cors";
 
 const app = express();
 
 const server = createServer(app);
-const io = new Server(server, {});
+const io = new Server(server, {
+  cors: corsOptions,
+});
 
 app.use(cookieParser());
 dotenv.config({
@@ -31,39 +37,16 @@ dotenv.config({
 
 //for accepting the json data coming from frontend (also req.body)
 app.use(express.json());
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:5173",
-//       "http://localhost:4173",
-//       process.env.CLIENT_URL,
-//     ],
-//     credentials: true,
-//   })
-// );
+app.use(cors(corsOptions));
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      process.env.CLIENT_URL,
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
+//for only accepting form-data but we need multipart form-data so we're using multer as middleware
+// app.use(express.urlencoded());
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-//for only accepting form-data but we need multipart form-data so we're using multer as middleware
-// app.use(express.urlencoded());
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
@@ -77,16 +60,17 @@ const adminSecretKey = process.env.ADMIN_SECRET_KEY || "alokranjanboss";
 const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
 const userSocketIDs = new Map();
 
+//Authentication using inbuilt middleware
+io.use((socket, next) => {
+  cookieParser()(
+    socket.request,
+    socket.request.res,
+    async (err) => await socketAuthenticator(err, socket, next)
+  );
+});
+
 io.on("connection", (socket) => {
-  //Authentication using inbuilt middleware
-
-  io.use((socket, next) => {});
-
-  const user = {
-    _id: "fo32se2i98fec",
-    name: "kalluaBadmos",
-  };
-
+  const user = socket.user;
   userSocketIDs.set(user._id.toString(), socket.id);
 
   console.log("A user_id mapping with socket_id: ", userSocketIDs);

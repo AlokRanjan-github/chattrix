@@ -6,10 +6,13 @@ import {
   CalendarMonth as CalendarIcon,
 } from "@mui/icons-material";
 import moment from "moment";
-const Profile = () => {
+import { transformImage } from "../../lib/features";
+
+const Profile = ({ user }) => {
   return (
     <Stack direction="column" spacing={"2rem"} alignItems={"center"}>
       <Avatar
+        src={transformImage(user?.avatar?.url)}
         sx={{
           width: 200,
           height: 200,
@@ -18,22 +21,15 @@ const Profile = () => {
           border: "5px solid white",
         }}
       />
+      <ProfileCard heading={"Bio"} text={user?.bio} />
       <ProfileCard
-        text={"This is my profile and stay away from my profile"}
-        heading={"Bio"}
-      />
-      <ProfileCard
-        text={"@alokrprajapati"}
         heading={"Username"}
+        text={user?.username}
         Icon={<UserNameIcon />}
       />
+      <ProfileCard heading={"Name"} text={user?.name} Icon={<FaceIcon />} />
       <ProfileCard
-        text={"Alok Ranjan Prajapati"}
-        heading={"Name"}
-        Icon={<FaceIcon />}
-      />
-      <ProfileCard
-        text={moment("2025-08-12T12:23:49.743Z").fromNow()}
+        text={moment(user?.createdAt).fromNow()}
         heading={"Joined"}
         Icon={<CalendarIcon />}
       />
@@ -41,7 +37,7 @@ const Profile = () => {
   );
 };
 
-const ProfileCard = ({ text, icon, heading }) => (
+const ProfileCard = ({ text, Icon, heading }) => (
   <Stack
     direction={"row"}
     spacing={"1rem"}
@@ -49,9 +45,20 @@ const ProfileCard = ({ text, icon, heading }) => (
     color={"white"}
     textAlign={"center"}
   >
-    {/* {Icon} */}
+    {Icon && React.isValidElement(Icon) && Icon}
+
     <Stack>
-      <Typography variant="body1">{text}</Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          maxWidth: "25rem",
+          whiteSpace: "normal",
+          wordBreak: "break-word",
+          textAlign: "center",
+        }}
+      >
+        {text}
+      </Typography>
       <Typography variant="caption" color={"gray"}>
         {heading}
       </Typography>

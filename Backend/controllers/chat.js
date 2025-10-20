@@ -38,10 +38,15 @@ const newGroupChat = TryCatch(async (req, res, next) => {
 });
 
 const getMyChats = TryCatch(async (req, res, next) => {
-  const chats = await Chat.find({ members: req.user }).populate(
+  const chats = await Chat.find({ members: req.user?._id }).populate(
     "members",
     "name avatar"
   );
+  
+  if (!req.user?._id) {
+  return next(new ErrorHandler("Your chats Not found", 401));
+}
+
 
   const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
     const otherMember = getOtherMember(members, req.user);
@@ -235,8 +240,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Please provide attachments", 400));
 
   //   Upload files here
-  // const attachments = await uploadFilesToCloudinary(files);
-  const attachments = [];
+  const attachments = await uploadFilesToCloudinary(files);
 
   const messageForDB = {
     content: "",
