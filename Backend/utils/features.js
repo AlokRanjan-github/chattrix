@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
-import { getBase64 } from "../lib/helper.js";
+import { getBase64, getSockets } from "../lib/helper.js";
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -35,7 +35,9 @@ const sendToken = (res, user, code, message) => {
 };
 
 const emitEvent = (req, event, users, data) => {
-  console.log("Emiting event", event);
+  const io = req.app.get("io");
+  const usersSocket = getSockets(users);
+  io.to(usersSocket).emit(event, data);
 };
 
 const uploadFilesToCloudinary = async (files = []) => {

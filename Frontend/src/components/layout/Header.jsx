@@ -1,6 +1,7 @@
 import {
   AppBar,
   Backdrop,
+  Badge,
   Box,
   IconButton,
   Toolbar,
@@ -23,18 +24,24 @@ import axios from "axios";
 import { userNotExists } from "../../redux/reducers/auth.js";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/misc.js";
+import {
+  setIsMobile,
+  setIsNotification,
+  setIsSearch,
+} from "../../redux/reducers/misc.js";
+import { resetNotificationCount } from "../../redux/reducers/chat.js";
 
 const SearchDialog = lazy(() => import("../specific/Search.jsx"));
 const NotificationDialog = lazy(() => import("../specific/Notifications.jsx"));
 const NewGroupDialog = lazy(() => import("../specific/NewGroups.jsx"));
 
 const Header = () => {
-  const { isSearch ,isNotification} = useSelector((state) => state.misc);
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
+  const { notificationCount } = useSelector((state) => state.chat);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const [isNewGroup, setIsNewGroup] = useState(false);
 
   const navigateToGroup = () => navigate("/groups");
@@ -63,7 +70,10 @@ const Header = () => {
     }
   };
 
-  const openNotification = () => dispatch(setIsNotification(true));
+  const openNotification = () => {
+    dispatch(setIsNotification(true));
+    dispatch(resetNotificationCount());
+  };
 
   return (
     <>
@@ -115,6 +125,7 @@ const Header = () => {
                 title={"Notifications"}
                 icon={<NotificationsIcon />}
                 onClick={openNotification}
+                value={notificationCount}
               />
               <IconBtn
                 title={"Logout"}
@@ -148,14 +159,13 @@ const IconBtn = ({ title, icon, onClick, value }) => {
   return (
     <Tooltip title={title}>
       <IconButton color="inherit" size="large" onClick={onClick}>
-        {/* {value ? (
+        {value ? (
           <Badge badgeContent={value} color="error">
             {icon}
           </Badge>
         ) : (
           icon
-        )} */}
-        {icon}
+        )}
       </IconButton>
     </Tooltip>
   );
