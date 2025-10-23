@@ -86,9 +86,9 @@ io.on("connection", (socket) => {
 
   console.log("A user_id mapping with socket_id: ", userSocketIDs);
 
-  socket.on(NEW_MESSAGE, async ({ chatId, members, messages }) => {
+  socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealTime = {
-      content: messages,
+      content: message,
       _id: uuid(),
       sender: {
         _id: user._id,
@@ -99,27 +99,23 @@ io.on("connection", (socket) => {
     };
 
     const messageForDB = {
-      content: messages,
+      content: message,
       sender: user._id,
       chat: chatId,
     };
 
     const membersSocket = getSockets(members);
-
     io.to(membersSocket).emit(NEW_MESSAGE, {
       chatId,
       message: messageForRealTime,
     });
-
     io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
 
     try {
       await Message.create(messageForDB);
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
-
-    console.log("New Message", messageForRealTime);
   });
 
   socket.on(START_TYPING, ({ members, chatId }) => {

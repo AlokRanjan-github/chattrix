@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense } from "react";
 import { orange } from "../constants/color.js";
 import {
   Menu as MenuIcon,
@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setIsMobile,
+  setIsNewGroup,
   setIsNotification,
   setIsSearch,
 } from "../../redux/reducers/misc.js";
@@ -36,13 +37,11 @@ const NotificationDialog = lazy(() => import("../specific/Notifications.jsx"));
 const NewGroupDialog = lazy(() => import("../specific/NewGroups.jsx"));
 
 const Header = () => {
-  const { isSearch, isNotification } = useSelector((state) => state.misc);
+  const { isNewGroup, isSearch, isNotification } = useSelector((state) => state.misc);
   const { notificationCount } = useSelector((state) => state.chat);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const [isNewGroup, setIsNewGroup] = useState(false);
 
   const navigateToGroup = () => navigate("/groups");
 
@@ -55,7 +54,7 @@ const Header = () => {
   };
 
   const openNewGroup = () => {
-    setIsNewGroup((prev) => !prev);
+    dispatch(setIsNewGroup(true));
   };
 
   const logoutHandler = async () => {

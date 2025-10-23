@@ -23,14 +23,21 @@ const fileFormat = (url = "") => {
   return "file";
 };
 
-// https://res.cloudinary.com/dj5q966nb/image/upload/dpr_auto/w_900/v1710344436/afdfef-2845-4ae7-a25a-632f01922b4d.png
+// https://res.cloudinary.com/dj5q966nb/image/upload/dpr_auto/w_200/v1710344436/fafceddc-45-4ae7-a25a-632f01922b4d.png
 
 // /dpr_auto/w_200
-const transformImage = (url = "", width = 100) => {
-  const newUrl = url.replace("upload/", `upload/dpr_auto/w_${width}/`);
+const transformImage = (url, width = 100) => {
+  // if url is array, take the first element
+  if (Array.isArray(url)) url = url[0];
 
-  return newUrl;
+  if (!url || typeof url !== "string") {
+    console.warn("transformImage got non-string url:", url);
+    return "/default-avatar.png"; // fallback
+  }
+
+  return url.replace("upload/", `upload/dpr_auto/w_${width}/`);
 };
+
 
 const getLast7Days = () => {
   const currentDate = moment();

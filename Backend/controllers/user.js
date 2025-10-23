@@ -1,6 +1,11 @@
 import { compare, hash } from "bcrypt";
 import { User } from "../models/user.js";
-import { cookieOptions, emitEvent, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
+import {
+  cookieOptions,
+  emitEvent,
+  sendToken,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
@@ -31,7 +36,6 @@ const newUser = TryCatch(async (req, res) => {
     avatar,
   });
 
-  // res.status(201).json({ message: "User created successfully" });
   sendToken(res, user, 201, "User Created Successfully");
 });
 

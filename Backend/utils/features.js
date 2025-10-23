@@ -30,6 +30,7 @@ const sendToken = (res, user, code, message) => {
     .cookie("ItsaSecret-Token", token, cookieOptions)
     .json({
       success: true,
+      user,
       message,
     });
 };

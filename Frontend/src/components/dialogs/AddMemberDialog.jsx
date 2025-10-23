@@ -3,26 +3,31 @@ import {
   Dialog,
   DialogTitle,
   Paper,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import { SampleUsers } from "../constants/sampleData";
 import UserItem from "../shared/UserItem";
+import {
+  useAddGroupMembersMutation,
+  useAvailableFriendsQuery,
+} from "../../redux/api/api";
+import { useAsyncMutation, useErrors } from "../../hooks/hook";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsAddMember } from "../../redux/reducers/misc";
 
-const AddMemberDialog = ({ addMember, isLoadingAddMembers, chatId }) => {
-  
-  const [members, setMembers] = useState([]);
+const AddMemberDialog = ({ chatId }) => {
+  const dispatch = useDispatch();
+  const { isAddMember } = useSelector((state) => state.misc);
+
+  const [addMembers, isLoadingAddMembers] = useAsyncMutation(
+    useAddGroupMembersMutation
+  );
+  const { isLoading, data, isError, error } = useAvailableFriendsQuery(chatId);
+
   const [selectedMembers, setSelectedMembers] = useState([]);
-
-  const closeHandler = () => {
-    setSelectedMembers([]);
-    setMembers([]);
-  };
-
-  const addMemberSubmitHandler = () => {
-    closeHandler();
-  };
 
   const selectMemberHandler = (id) => {
     setSelectedMembers((prev) =>
@@ -32,8 +37,19 @@ const AddMemberDialog = ({ addMember, isLoadingAddMembers, chatId }) => {
     );
   };
 
+  const closeHandler = () => {
+    dispatch(setIsAddMember(false));
+  };
+
+  const addMemberSubmitHandler = () => {
+    addMembers("Adding Members...", { members: selectedMembers, chatId });
+    closeHandler();
+  };
+
+  useErrors([{ isError, error }]);
+
   return (
-    <Dialog open onClose={closeHandler}>
+    <Dialog open={isAddMember} onClose={closeHandler}>
       <Stack
         p={{ xs: "1rem", sm: "2rem" }}
         width={{ xs: "100%", sm: "24rem", md: "26rem" }}
@@ -45,8 +61,10 @@ const AddMemberDialog = ({ addMember, isLoadingAddMembers, chatId }) => {
         </DialogTitle>
 
         <Stack spacing={1}>
-          {members.length > 0 ? (
-            members.map((i) => (
+          {isLoading ? (
+            <Skeleton />
+          ) : data?.friends?.length > 0 ? (
+            data?.friends?.map((i) => (
               <Paper
                 key={i._id}
                 elevation={2}

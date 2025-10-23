@@ -1,26 +1,23 @@
-import React, { memo } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  Stack,
-  Typography,
-  ListItem,
   Avatar,
   Button,
+  Dialog,
+  DialogTitle,
+  ListItem,
   Paper,
   Skeleton,
+  Stack,
+  Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { SampleNotifications } from "../constants/sampleData";
+import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useAsyncMutation, useErrors } from "../../hooks/hook";
+import { transformImage } from "../../lib/features";
 import {
   useAcceptFriendRequestMutation,
   useGetNotificationsQuery,
 } from "../../redux/api/api";
-import { useAsyncMutation, useErrors } from "../../hooks/hook";
 import { setIsNotification } from "../../redux/reducers/misc";
-import toast from "react-hot-toast";
-import { transformImage } from "../../lib/features";
 
 const Notifications = () => {
   const { isNotification } = useSelector((state) => state.misc);
@@ -31,19 +28,9 @@ const Notifications = () => {
 
   const [acceptRequest] = useAsyncMutation(useAcceptFriendRequestMutation);
 
-  // dispatch(setIsNotification(false));
-  // await acceptRequest("Accepting...", { requestId: _id, accept });
   const friendRequestHandler = async ({ _id, accept }) => {
-    try {
-      const res = await acceptRequest({ requestId: _id, accept });
-      if (res.data?.success) {
-        console.log("Use Socket Here");
-        toast.success(res.data.message);
-      } else toast.error(res.data?.error || "Something went wrong");
-    } catch (error) {
-      toast.error("Something went wrong from toast");
-      console.log("Message output:", error);
-    }
+    dispatch(setIsNotification(false));
+    await acceptRequest("Accepting...", { requestId: _id, accept });
   };
 
   const closeHandler = () => dispatch(setIsNotification(false));
@@ -81,7 +68,7 @@ const Notifications = () => {
   );
 };
 
-const NotificationsItem = memo(({ sender, _id, handler, handlerIsLoading }) => {
+const NotificationsItem = memo(({ sender, _id, handler }) => {
   const { name, avatar } = sender;
 
   return (

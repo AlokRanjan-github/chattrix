@@ -1,19 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { IconButton, Skeleton, Stack } from "@mui/material";
+import { useInfiniteScrollTop } from "6pp";
 import {
   AttachFile as AttachFileIcon,
   Send as SendIcon,
 } from "@mui/icons-material";
-import { InputBox } from "../components/Style/StyledComponent";
-import { grayColor } from "../components/constants/color";
-import AppLayout from "../components/layout/AppLayout";
-import { orange } from "../components/constants/color";
-import FileMenu from "../components/dialogs/FileMenu";
-import MessageComponent from "../components/shared/MessageComponent";
-import { getSocket } from "../socket";
+import { IconButton, Skeleton, Stack } from "@mui/material";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useErrors, useSocketEvents } from "../hooks/hook";
+import { InputBox } from "../components/Style/StyledComponent";
+import { grayColor, orange } from "../components/constants/color";
 import {
   ALERT,
   CHAT_JOINED,
@@ -22,10 +17,15 @@ import {
   START_TYPING,
   STOP_TYPING,
 } from "../components/constants/events";
+import FileMenu from "../components/dialogs/FileMenu";
+import AppLayout from "../components/layout/AppLayout";
+import MessageComponent from "../components/shared/MessageComponent";
+import { useErrors, useSocketEvents } from "../hooks/hook";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
-import { useInfiniteScrollTop } from "6pp";
-import { setIsFileMenu } from "../redux/reducers/misc";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
+import { setIsFileMenu } from "../redux/reducers/misc";
+import { getSocket } from "../socket";
+import { TypingLoader } from "../components/layout/Loaders";
 
 const Chat = ({ chatId, user }) => {
   const socket = getSocket();
@@ -103,7 +103,7 @@ const Chat = ({ chatId, user }) => {
       setPage(1);
       socket.emit(CHAT_LEAVED, { userId: user._id, members });
     };
-  }, [chatId]);
+  }, [chatId, socket, user._id, members, dispatch, setOldMessages]);
 
   useEffect(() => {
     if (bottomRef.current)
@@ -112,7 +112,7 @@ const Chat = ({ chatId, user }) => {
 
   useEffect(() => {
     if (chatDetails.isError) return navigate("/");
-  }, [chatDetails.isError]);
+  }, [chatDetails.isError, navigate]);
 
   const newMessagesListener = useCallback(
     (data) => {
@@ -187,8 +187,8 @@ const Chat = ({ chatId, user }) => {
           overflowY: "auto",
         }}
       >
-        {allMessages.map((i, index) => (
-          <MessageComponent key={i._id + index} message={i} user={user} />
+        {allMessages.map((i) => (
+          <MessageComponent key={i._id} message={i} user={user} />
         ))}
 
         {userTyping && <TypingLoader />}
@@ -205,7 +205,7 @@ const Chat = ({ chatId, user }) => {
         <Stack
           direction="row"
           height={"100%"}
-          padding={"1rem"}
+          padding={"10px"}
           alignItems="center"
           position={"relative"}
           spacing={1}
@@ -222,6 +222,7 @@ const Chat = ({ chatId, user }) => {
 
           <InputBox
             placeholder="Type Message Here..."
+            style={{ fontSize: "1.1rem" }}
             value={message}
             onChange={messageOnChange}
           />
