@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/rules-of-hooks */
 import { createContext, useContext, useMemo } from "react";
 import io from "socket.io-client";
 import { server } from "./components/constants/config";

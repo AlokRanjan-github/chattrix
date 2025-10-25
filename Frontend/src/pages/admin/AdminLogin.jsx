@@ -1,29 +1,24 @@
-import React from "react";
-import {
-  Avatar,
-  Button,
-  Container,
-  IconButton,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
 import { useInputValidation } from "6pp";
-import { bgGradient } from "../../components/constants/color";
+import { Button, Container, Paper, TextField, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-
-const isAdmin = true;
-
+import { bgGradient } from "../../components/constants/color";
+import { adminLogin, getAdmin } from "../../redux/thunks/admin";
 
 const AdminLogin = () => {
-  
   const secretKey = useInputValidation("");
-  
+  const dispatch = useDispatch();
+  const { isAdmin } = useSelector((state) => state.auth);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log("submit is called");
+    dispatch(adminLogin(secretKey.value));
   };
+
+  useEffect(() => {
+    dispatch(getAdmin());
+  }, [dispatch]);
 
   if (isAdmin) return <Navigate to={"/admin/dashboard"} />;
 
