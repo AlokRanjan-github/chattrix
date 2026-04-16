@@ -26,18 +26,14 @@ const fileFormat = (url = "") => {
 // https://res.cloudinary.com/dj5q966nb/image/upload/dpr_auto/w_200/v1710344436/fafceddc-45-4ae7-a25a-632f01922b4d.png
 
 // /dpr_auto/w_200
-const transformImage = (url, width = 100) => {
-  // if url is array, take the first element
-  if (Array.isArray(url)) url = url[0];
 
-  if (!url || typeof url !== "string") {
-    console.warn("transformImage got non-string url:", url);
-    return "/default-avatar.png"; // fallback
-  }
+const transformImage = (url = "", width = 100) => {
+  if (typeof url !== "string")
+    return "https://www.w3schools.com/howto/img_avatar.png";
+  const newUrl = url.replace("upload/", `upload/dpr_auto/w_${width}/`);
 
-  return url.replace("upload/", `upload/dpr_auto/w_${width}/`);
+  return newUrl;
 };
-
 
 const getLast7Days = () => {
   const currentDate = moment();
@@ -62,4 +58,4 @@ const getOrSaveFromStorage = ({ key, value, get }) => {
   else localStorage.setItem(key, JSON.stringify(value));
 };
 
-export { fileFormat, transformImage, getLast7Days, getOrSaveFromStorage };
+export { fileFormat, getLast7Days, getOrSaveFromStorage, transformImage };

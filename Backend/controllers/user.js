@@ -15,9 +15,10 @@ import { getOtherMember } from "../lib/helper.js";
 
 // Create a new user and save it to the database and save in cookies
 
-const newUser = TryCatch(async (req, res) => {
+const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
   const file = req.file;
+  console.log("printing the file recieved", file);
 
   if (!file) return next(new ErrorHandler("Please upload Avatar"));
 
@@ -105,6 +106,10 @@ const searchUser = TryCatch(async (req, res) => {
 const sendFriendRequest = TryCatch(async (req, res, next) => {
   const { userId } = req.body;
 
+  if (userId.toString() === req.user.toString())
+    return next(new ErrorHandler("You cannot send a friend request to yourself", 400));
+
+
   const request = await Request.findOne({
     $or: [
       { sender: req.user, receiver: userId },
@@ -160,6 +165,7 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
     request.deleteOne(),
   ]);
 
+  console.log("Friend Request Accepted. Members:", members); // Debug Log
   emitEvent(req, REFETCH_CHATS, members);
 
   return res.status(200).json({
@@ -198,15 +204,20 @@ const getMyFriends = TryCatch(async (req, res) => {
     groupChat: false,
   }).populate("members", "name avatar");
 
-  const friends = chats.map(({ members }) => {
-    const otherUser = getOtherMember(members, req.user);
+  const friends = chats
+    .map(({ members }) => {
+      const otherUser = getOtherMember(members, req.user);
 
-    return {
-      _id: otherUser._id,
-      name: otherUser.name,
-      avatar: otherUser.avatar.url,
-    };
-  });
+      if (!otherUser) return null;
+
+      return {
+        _id: otherUser._id,
+        name: otherUser.name,
+        avatar: otherUser.avatar.url,
+      };
+    })
+    .filter((friend) => friend !== null);
+
 
   if (chatId) {
     const chat = await Chat.findById(chatId);

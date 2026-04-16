@@ -17,11 +17,9 @@ const connectDB = async () => {
 
 const cookieOptions = {
   maxAge: 24 * 60 * 60 * 1000,
+  sameSite: process.env.NODE_ENV?.toLowerCase() === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV?.toLowerCase() === "production",
   httpOnly: true,
-  sameSite: "none",
-  secure: true,
-  // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  // secure: process.env.NODE_ENV === "production",
 };
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
@@ -38,7 +36,7 @@ const sendToken = (res, user, code, message) => {
 const emitEvent = (req, event, users, data) => {
   const io = req.app.get("io");
   const usersSocket = getSockets(users);
-  
+
   console.log("🟢 Event:", event);
   console.log("📩 Target Users:", users);
   console.log("🔌 Socket IDs:", usersSocket);

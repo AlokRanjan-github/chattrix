@@ -22,21 +22,29 @@ import { useAsyncMutation } from "../../hooks/hook";
 
 const Search = () => {
   const { isSearch } = useSelector((state) => state.misc);
-  const dispatch = useDispatch();
-  const search = useInputValidation("");
+  const { user } = useSelector((state) => state.auth);
+
+
   const [searchUser] = useLazySearchUserQuery();
+
   const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(
     useSendFriendRequestMutation
   );
 
-  // let isLoadingSendFriendRequest = false;
-  const [users, setUsers] = useState(SampleUsers);
+  const dispatch = useDispatch();
+
+  const search = useInputValidation("");
+
+  const [users, setUsers] = useState([]);
 
   const addFriendHandler = async (id) => {
+    if (id === user?._id) return;
     await sendFriendRequest("Sending friend request...", { userId: id });
   };
 
+
   const searchCloseHandler = () => dispatch(setIsSearch(false));
+
   useEffect(() => {
     const timeOutId = setTimeout(() => {
       searchUser(search.value)

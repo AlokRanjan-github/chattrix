@@ -39,12 +39,12 @@ const Chat = ({ chatId, user }) => {
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
   const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
+
   const [IamTyping, setIamTyping] = useState(false);
   const [userTyping, setUserTyping] = useState(false);
   const typingTimeout = useRef(null);
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
-  const members = chatDetails?.data?.chat?.members;
 
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
 
@@ -61,6 +61,8 @@ const Chat = ({ chatId, user }) => {
     { isError: oldMessagesChunk.isError, error: oldMessagesChunk.error },
   ];
 
+  const members = chatDetails?.data?.chat?.members;
+
   const messageOnChange = (e) => {
     setMessage(e.target.value);
 
@@ -74,7 +76,7 @@ const Chat = ({ chatId, user }) => {
     typingTimeout.current = setTimeout(() => {
       socket.emit(STOP_TYPING, { members, chatId });
       setIamTyping(false);
-    }, 2000);
+    }, [1500]);
   };
 
   const handleFileOpen = (e) => {
@@ -103,7 +105,7 @@ const Chat = ({ chatId, user }) => {
       setPage(1);
       socket.emit(CHAT_LEAVED, { userId: user._id, members });
     };
-  }, [chatId, socket, user._id, members, dispatch, setOldMessages]);
+  }, [chatId]);
 
   useEffect(() => {
     if (bottomRef.current)
@@ -112,7 +114,7 @@ const Chat = ({ chatId, user }) => {
 
   useEffect(() => {
     if (chatDetails.isError) return navigate("/");
-  }, [chatDetails.isError, navigate]);
+  }, [chatDetails.isError]);
 
   const newMessagesListener = useCallback(
     (data) => {

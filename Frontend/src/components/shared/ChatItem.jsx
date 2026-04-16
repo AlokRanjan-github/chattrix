@@ -22,9 +22,9 @@ const ChatItem = ({
       sx={{ padding: "0" }}
     >
       <motion.div
-        initial={{ opacity: 0, y: "-100%" }}
+        initial={{ opacity: 0, y: "-30px" }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 * index }}
+        transition={{ delay: 0.05 * index, duration: 0.2 }}
         style={{
           display: "flex",
           gap: "1rem",
@@ -35,26 +35,26 @@ const ChatItem = ({
           padding: "1rem",
         }}
       >
-        <AvatarCard avatar={[avatar]} />
+        {/* Left Side: Avatar + Text */}
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center", flex: 1 }}>
+          <AvatarCard avatar={avatar} />
 
-        <Stack>
-          <Typography>{name}</Typography>
-          {newMessageAlert && (
-            <Typography>{newMessageAlert.count} New Message</Typography>
-          )}
-        </Stack>
+          <Stack>
+            <Typography>{name}</Typography>
+            {newMessageAlert && (
+              <Typography>{newMessageAlert.count} New Message</Typography>
+            )}
+          </Stack>
+        </div>
 
+        {/* Right Side: Online Status */}
         {isOnline && (
           <Box
             sx={{
-              position: "absolute",
-              top: "50%",
-              right: "1rem",
               width: "10px",
               height: "10px",
               borderRadius: "50%",
               backgroundColor: "green",
-              transform: "translateY(-50%)",
             }}
           />
         )}
@@ -63,4 +63,4 @@ const ChatItem = ({
   );
 };
 
-export default memo(ChatItem); // it won't render until changes occurs in its prop
+export default memo(ChatItem); 

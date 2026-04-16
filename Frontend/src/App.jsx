@@ -12,6 +12,7 @@ import ProtectRoute from "./components/auth/ProtectRoute";
 import { SocketProvider } from "./socket.jsx";
 
 const HomeWithLayout = lazy(() => import("./pages/Home"));
+const LandingPage = lazy(() => import("./pages/LandingPage"));
 const ChatWithLayout = lazy(() => import("./pages/Chat"));
 const Login = lazy(() => import("./pages/Login"));
 const Groups = lazy(() => import("./pages/Groups"));
@@ -56,15 +57,24 @@ const App = () => {
               </SocketProvider>
             }
           >
-            <Route path="/" element={<HomeWithLayout />} />
+            <Route path="/chat" element={<HomeWithLayout />} />
             <Route path="/chat/:chatId" element={<ChatWithLayout />} />
             <Route path="/groups" element={<Groups />} />
           </Route>
 
           <Route
+            path="/"
+            element={
+              <ProtectRoute user={!user} redirect="/chat">
+                <LandingPage />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
             path="/login"
             element={
-              <ProtectRoute user={!user} redirect="/">
+              <ProtectRoute user={!user} redirect="/chat">
                 <Login />
               </ProtectRoute>
             }

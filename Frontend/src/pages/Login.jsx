@@ -21,7 +21,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

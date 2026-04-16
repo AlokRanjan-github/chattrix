@@ -44,17 +44,21 @@ const getMyChats = TryCatch(async (req, res, next) => {
   );
 
   const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
-    const otherMember = getOtherMember(members, req.user);
+    // Remove any null/undefined members (deleted users)
+    const validMembers = members.filter(Boolean);
+
+    // For DMs (non-group chats)
+    const otherMember = getOtherMember(validMembers, req.user);
 
     return {
       _id,
       groupChat,
       avatar: groupChat
-        ? members.slice(0, 3).map(({ avatar }) => avatar.url)
-        : [otherMember.avatar.url],
-      name: groupChat ? name : otherMember.name,
-      members: members.reduce((prev, curr) => {
-        if (curr._id.toString() !== req.user.toString()) {
+        ? validMembers.slice(0, 3).map((m) => m?.avatar?.url || "/default-avatar.png")
+        : [otherMember?.avatar?.url || "/default-avatar.png"],
+      name: groupChat ? name : otherMember?.name || "User no longer Exists",
+      members: validMembers.reduce((prev, curr) => {
+        if (curr?._id?.toString() !== req.user.toString()) {
           prev.push(curr._id);
         }
         return prev;
@@ -67,6 +71,7 @@ const getMyChats = TryCatch(async (req, res, next) => {
     chats: transformedChats,
   });
 });
+
 
 const getMyGroups = TryCatch(async (req, res, next) => {
   const chats = await Chat.find({
@@ -106,7 +111,7 @@ const addMembers = TryCatch(async (req, res, next) => {
   const allNewMembers = await Promise.all(allNewMembersPromise);
 
   const uniqueMembers = allNewMembers
-    .filter((i) => !chat.members.includes(i._id.toString()))
+    .filter((i) => !chat.members.some((m) => m.toString() === i._id.toString()))
     .map((i) => i._id);
 
   chat.members.push(...uniqueMembers);
@@ -277,11 +282,17 @@ const getChatDetails = TryCatch(async (req, res, next) => {
 
     if (!chat) return next(new ErrorHandler("Chat not found", 404));
 
-    chat.members = chat.members.map(({ _id, name, avatar }) => ({
-      _id,
-      name,
-      avatar: avatar.url,
-    }));
+    chat.members = chat.members
+      .map((member) => {
+        if (!member) return null;
+        return {
+          _id: member._id,
+          name: member.name,
+          avatar: member.avatar?.url || "/default-avatar.png",
+        };
+      })
+      .filter((member) => member !== null);
+
 
     return res.status(200).json({
       success: true,
@@ -340,7 +351,7 @@ const deleteChat = TryCatch(async (req, res, next) => {
       new ErrorHandler("You are not allowed to delete the group", 403)
     );
 
-  if (!chat.groupChat && !chat.members.includes(req.user.toString())) {
+  if (!chat.groupChat && !chat.members.some((m) => m.toString() === req.user.toString())) {
     return next(
       new ErrorHandler("You are not allowed to delete the chat", 403)
     );
@@ -384,7 +395,7 @@ const getMessages = TryCatch(async (req, res, next) => {
 
   if (!chat) return next(new ErrorHandler("Chat not found", 404));
 
-  if (!chat.members.includes(req.user.toString()))
+  if (!chat.members.some((m) => m.toString() === req.user.toString()))
     return next(
       new ErrorHandler("You are not allowed to access this chat", 403)
     );

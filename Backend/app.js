@@ -67,7 +67,7 @@ app.get("/", (req, res) => {
 });
 
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "alokranjanboss";
-const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
+const envMode = process.env.NODE_ENV?.toLowerCase() === "production" ? "PRODUCTION" : "DEVELOPMENT";
 const userSocketIDs = new Map();
 const onlineUsers = new Set();
 
@@ -83,6 +83,8 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   const user = socket.user;
   userSocketIDs.set(user._id.toString(), socket.id);
+  console.log("Connected User:", user._id.toString(), "Socket ID:", socket.id); // Debug Log
+  console.log("Current userSocketIDs:", Array.from(userSocketIDs.entries())); // Debug Log
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealTime = {
@@ -141,8 +143,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    userSocketIDs.delete(user._id.toString());
-    onlineUsers.delete(user._id.toString());
+    userSocketIDs.delete(user?._id.toString());
+    onlineUsers.delete(user?._id.toString());
     socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));
   });
 });

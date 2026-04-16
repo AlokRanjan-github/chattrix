@@ -1,8 +1,19 @@
-export const orange = "#ea7070";
-export const orangeLight = "#ec7e7eff";
-export const grayColor = "rgba(238, 234, 234, 1)";
-export const lightBlue = "#2694ab";
-export const matBlack = "#1c1c1c";
-export const bgGradient = "linear-gradient(rgb(255 225 209), rgb(249 159 159))";
-export const purple = "rgba(88, 18, 218, 1)";
-export const purpleLight = "rgba(77, 13, 197, 0.34)";
+/* Ocean Blue Palette */
+
+// Primary Action Color (Royal Blue)
+export const orange = "#2563EB";
+export const orangeLight = "#3B82F6";
+
+// Backgrounds
+export const grayColor = "#F4F6F8"; // Clean, cool gray for light mode backgrounds
+export const matBlack = "#1E1E24"; // Deep almost-black for text/headers
+
+// Accents
+export const lightBlue = "#0EA5E9"; // Sky Blue for accents/success
+
+// Gradients
+export const bgGradient = "linear-gradient(135deg, #E0F2FE 0%, #DBEAFE 100%)"; // Soft Blue Gradient
+
+// Secondary / Old Colors kept for compatibility or specific uses
+export const purple = "#ea7070"; // Keeping old 'orange' as 'purple' just in case
+export const purpleLight = "rgba(37, 99, 235, 0.2)"; // Light Blue mask

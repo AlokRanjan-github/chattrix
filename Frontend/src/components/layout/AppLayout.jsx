@@ -30,22 +30,23 @@ import Header from "./Header";
 
 const AppLayout = (WrappedComponent) => {
   return (props) => {
-    const { isMobile } = useSelector((state) => state.misc);
-    const { user } = useSelector((state) => state.auth);
-    const { newMessagesAlert } = useSelector((state) => state.chat);
-
     const params = useParams();
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const socket = getSocket();
+
     const chatId = params.chatId;
     const deleteMenuAnchor = useRef(null);
+
     const [onlineUsers, setOnlineUsers] = useState([]);
 
-    const socket = getSocket();
+    const { user } = useSelector((state) => state.auth);
+    const { isMobile } = useSelector((state) => state.misc);
+    const { newMessagesAlert } = useSelector((state) => state.chat);
 
     const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
 
-    const handleMobileClose = () => dispatch(setIsMobile(false));
+    useErrors([{ isError, error }]);
 
     useEffect(() => {
       getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessagesAlert });
@@ -57,12 +58,14 @@ const AppLayout = (WrappedComponent) => {
       deleteMenuAnchor.current = e.currentTarget;
     };
 
+    const handleMobileClose = () => dispatch(setIsMobile(false));
+
     const newMessageAlertListener = useCallback(
       (data) => {
         if (data.chatId === chatId) return;
         dispatch(setNewMessagesAlert(data));
       },
-      [chatId, dispatch]
+      [chatId]
     );
 
     const newRequestListener = useCallback(() => {
@@ -86,7 +89,6 @@ const AppLayout = (WrappedComponent) => {
     };
 
     useSocketEvents(socket, eventHandlers);
-    useErrors([{ isError, error }]);
 
     // Default component if WrappedComponent is missing
     const ComponentToRender =
